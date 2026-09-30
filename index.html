@@ -542,8 +542,11 @@ let sampleFn=null,limImg=null;
 const LECTURE_URL=document.querySelector('meta[name="lecture-url"]')?.content||"";
 const lisible=f=>LECTURE_URL?/^(image\/(jpeg|png|webp)|application\/pdf)$/.test(f.type):IMG.test(f.type);
 const b64=f=>new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=()=>ko({code:"image_rejected"});r.readAsDataURL(f)});
+// L'adresse ne se lit que sur le justificatif de domicile, jamais sur la pièce d'identité.
+const ADR=["adresse","cp","ville","pays"];
+const rolePiece=(m,k)=>{const l=m.pieces.find(p=>p.id===k)?.label||"";return /domicile/i.test(l)?"domicile":/identit/i.test(l)?"identite":"autre"};
 async function lireMistral(m,ids,champs){
-  const pieces=await Promise.all(ids.map(async k=>({label:m.pieces.find(p=>p.id===k)?.label||"pièce",mime:C.blobs[k].type,data:await b64(C.blobs[k])})));
+  const pieces=await Promise.all(ids.map(async k=>({label:m.pieces.find(p=>p.id===k)?.label||"pièce",role:rolePiece(m,k),mime:C.blobs[k].type,data:await b64(C.blobs[k])})));
   const rep=await fetch(LECTURE_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({type:m.type,champs,pieces})});
   if(!rep.ok)throw{code:rep.status===429?"rate_limited":"upstream_error"};
   return (await rep.json()).valeurs;
@@ -574,9 +577,10 @@ async function lire(){
   const m=mod(C.mod),etapeMod=C.mod;
   const ids=m.pieces.map(p=>p.id).filter(k=>C.blobs[k]&&lisible(C.blobs[k])).slice(0,LECTURE_URL?6:(limImg?.maxCount||4));
   if(!ids.length||!(LECTURE_URL||sampleFn)||C.lecture)return;
-  const champs=m.champs.filter(aLire).map(f=>({id:f.id,label:f.label,type:f.type,...(f.type==="select"?{choix:f.options}:{})}));
+  const aDom=ids.some(k=>rolePiece(m,k)==="domicile");
+  const champs=m.champs.filter(f=>aLire(f)&&(aDom||!ADR.includes(f.id))).map(f=>({id:f.id,label:f.label,type:f.type,...(f.type==="select"?{choix:f.options}:{})}));
   const prompt=`Tu aides à préremplir le formulaire d'ouverture de dossier d'un cabinet d'avocats. Les images jointes sont, dans l'ordre : ${ids.map((k,i)=>(i+1)+") "+(m.pieces.find(p=>p.id===k)?.label||"pièce")).join(" ; ")}. Le client est ${m.type==="B2B"?"un professionnel (société)":"un particulier"}.
-Lis ces pièces et réponds uniquement par un objet JSON {"id_du_champ": "valeur"} pour les champs listés ci-dessous dont la valeur est lisible sur les pièces. N'invente rien : omets tout champ absent ou illisible. Dates au format AAAA-MM-JJ. Pour un champ à choix, reprends exactement l'un des choix. L'adresse vient du justificatif de domicile (ou de l'extrait de registre pour le siège d'une société) : le champ d'adresse contient seulement le numéro et la rue, le code postal, la ville et le pays vont dans leurs propres champs.
+Lis ces pièces et réponds uniquement par un objet JSON {"id_du_champ": "valeur"} pour les champs listés ci-dessous dont la valeur est lisible sur les pièces. N'invente rien : omets tout champ absent ou illisible. Dates au format AAAA-MM-JJ. Pour un champ à choix, reprends exactement l'un des choix. Les champs adresse, cp, ville et pays se lisent uniquement sur le justificatif de domicile, jamais sur la pièce d'identité ni sur un autre document, même si une adresse y figure. Le champ adresse contient seulement le numéro et la rue ; le code postal, la ville et le pays vont dans leurs propres champs. Les autres champs ne se lisent pas sur le justificatif de domicile.
 Champs : ${JSON.stringify(champs)}`;
   C.lecture=true;C.lectureMsg="";majLecture();
   const dossier=C;
@@ -585,7 +589,7 @@ Champs : ${JSON.stringify(champs)}`;
     if(dossier!==C||C.mod!==etapeMod)return;
     let n=0;
     if(r&&typeof r==="object")m.champs.forEach(f=>{
-      const v=r[f.id];if(!aLire(f)||v==null||typeof v==="object")return;
+      const v=r[f.id];if(!aLire(f)||(!aDom&&ADR.includes(f.id))||v==null||typeof v==="object")return;
       let t=String(v).trim();if(!t)return;
       if(f.type==="select"){t=optFr(f,t);if(!t)return}
       if(f.type==="date"&&!/^\d{4}-\d{2}-\d{2}$/.test(t))return;

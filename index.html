@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="lecture-url" content="">
+<title>NC Advocat – ouverture de dossier</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+:root{
+  --fond:#F0F0F1; --feuille:#FFFFFF; --encre:#2B2B2D; --doux:#5F6066; --trait:#D0D1D5;
+  --sceau:#D42F42; --sceau-fond:#FCEBED; --ok:#2E6B4F; --ok-fond:#E6F1EB; --champ:#F7F7F8;
+  --serif:"Newsreader",Georgia,"Times New Roman",serif;
+  --sans:"Public Sans",system-ui,-apple-system,"Segoe UI",Arial,sans-serif;
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --fond:#0F1624; --feuille:#182236; --encre:#E8ECF3; --doux:#9AA6BC; --trait:#33405A;
+  --sceau:#F0707C; --sceau-fond:#3A1F24; --ok:#7CC7A2; --ok-fond:#1B3329; --champ:#111A2B;}}
+:root[data-theme="dark"]{
+  --fond:#0F1624; --feuille:#182236; --encre:#E8ECF3; --doux:#9AA6BC; --trait:#33405A;
+  --sceau:#F0707C; --sceau-fond:#3A1F24; --ok:#7CC7A2; --ok-fond:#1B3329; --champ:#111A2B;}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*,*::before,*::after{box-sizing:inherit}
+body{margin:0;background:var(--fond);color:var(--encre);font-family:var(--sans);font-size:16px;line-height:1.5}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--sceau);outline-offset:2px}
+header.barre{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:#fff;color:#373736;border-bottom:1px solid #D0D1D5;display:flex;flex-wrap:wrap;gap:.5rem 1rem;align-items:center;justify-content:space-between;padding:.6rem 1rem}
+.barre strong{font-family:var(--serif);font-weight:500;font-size:1.15rem}
+.barre small{opacity:.75;margin-left:.5rem}
+.barre>div:first-child{display:flex;align-items:center;gap:.9rem;flex-wrap:wrap}
+.logo{height:26px;width:auto;display:block}
+.convention .logo{height:46px;background:#fff;padding:8px 12px;border-radius:3px;margin-bottom:1.4rem}
+.convention table{font-family:var(--sans);font-size:.82rem;line-height:1.4;min-width:640px}
+.convention td,.convention th{white-space:normal;vertical-align:top}
+.bascule{display:flex;border:1px solid #9A9A9D;border-radius:999px;overflow:hidden}
+.bascule button{background:none;border:0;color:inherit;padding:.5rem 1rem;min-height:44px;cursor:pointer}
+.bascule button[aria-pressed="true"]{background:#373736;color:#fff;font-weight:600}
+main{max-width:1080px;margin:0 auto;padding:1.25rem 1rem 4rem}
+.client{display:grid;grid-template-columns:220px 1fr;gap:1.5rem;align-items:start}
+ol.etapes{list-style:none;margin:0;padding:0;counter-reset:e;position:sticky;top:5rem}
+ol.etapes li{counter-increment:e;display:flex;gap:.7rem;align-items:center;padding:.55rem 0;color:var(--doux)}
+ol.etapes li::before{content:counter(e);flex:none;width:1.9rem;height:1.9rem;border-radius:50%;border:1.5px solid var(--trait);display:grid;place-items:center;font-size:.85rem;font-weight:600}
+ol.etapes li.fait::before{content:"✓";background:var(--ok);border-color:var(--ok);color:var(--feuille)}
+ol.etapes li.ici{color:var(--encre);font-weight:600}
+ol.etapes li.ici::before{background:var(--sceau);border-color:var(--sceau);color:var(--feuille)}
+.feuille{background:var(--feuille);border:1px solid var(--trait);border-top:5px solid var(--sceau);border-radius:3px;padding:clamp(1.25rem,4vw,2.75rem);min-width:0}
+h1{font-family:var(--serif);font-weight:500;font-size:clamp(1.7rem,4vw,2.4rem);line-height:1.15;margin:0 0 .4rem}
+h2{font-family:var(--serif);font-weight:500;font-size:1.35rem;margin:1.75rem 0 .6rem}
+h3{font-size:1rem;margin:1.2rem 0 .3rem}
+p.intro{color:var(--doux);max-width:62ch;margin:.2rem 0 1.4rem}
+.choix{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:.75rem}
+.choix button{text-align:left;background:var(--champ);border:1.5px solid var(--trait);border-radius:4px;padding:1rem;min-height:76px;cursor:pointer}
+.choix button[aria-pressed="true"]{border-color:var(--sceau);background:var(--sceau-fond)}
+.choix b{display:block;font-family:var(--serif);font-weight:500;font-size:1.15rem}
+.choix span{color:var(--doux);font-size:.9rem}
+.grille{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:1rem}
+.grille .large{grid-column:1/-1}
+.grille .coche{margin:.6rem 0 0}
+.grille h3{margin:.9rem 0 0;font-family:var(--serif);font-weight:600;font-size:1.12rem;border-bottom:1px solid var(--trait);padding-bottom:.3rem}
+label.ch{display:block;font-size:.92rem;font-weight:500}
+label.ch em{color:var(--sceau);font-style:normal}
+.ch input,.ch select,.ch textarea,.adm input[type=text],.adm select,.adm textarea{display:block;width:100%;margin-top:.3rem;background:var(--champ);border:1.5px solid var(--trait);border-radius:4px;padding:.7rem .75rem;min-height:48px}
+.ch textarea{min-height:110px;resize:vertical}
+.ch.err input,.ch.err select,.ch.err textarea{border-color:var(--sceau)}
+.piece{display:flex;flex-wrap:wrap;gap:.75rem;align-items:center;justify-content:space-between;border:1.5px dashed var(--trait);border-radius:4px;padding:1rem;margin-bottom:.75rem}
+.piece.ok{border-style:solid;border-color:var(--ok);background:var(--ok-fond)}
+.piece small{display:block;color:var(--doux)}
+.piece input{position:absolute;opacity:0;width:1px;height:1px}
+.ch.auto input,.ch.auto select,.ch.auto textarea{border-color:var(--ok);background:var(--ok-fond)}
+.ch small{display:block;color:var(--ok);font-weight:400;margin-top:.2rem}
+.btn[disabled]{opacity:.45;cursor:not-allowed}
+#zoneLecture{margin:1rem 0 .5rem}#zoneLecture .note{margin:.6rem 0 0}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:.6rem 1.2rem;border-radius:4px;border:1.5px solid var(--encre);background:none;cursor:pointer;font-weight:600}
+.btn.plein{background:var(--encre);color:var(--feuille)}
+.btn.sceau{background:var(--sceau);border-color:var(--sceau);color:var(--feuille)}
+.btn.petit{min-height:38px;padding:.3rem .7rem;font-weight:500;font-size:.9rem;border-color:var(--trait)}
+.actions{display:flex;flex-wrap:wrap;gap:.75rem;justify-content:space-between;margin-top:2rem;padding-top:1.25rem;border-top:1px solid var(--trait)}
+.alerte{background:var(--sceau-fond);border-left:4px solid var(--sceau);padding:.75rem 1rem;margin-top:1rem;border-radius:2px}
+.note{background:var(--champ);border:1px solid var(--trait);padding:.75rem 1rem;border-radius:4px;font-size:.92rem;color:var(--doux)}
+.convention{font-family:var(--serif);font-size:1.08rem;line-height:1.65;max-width:68ch}
+.convention h3{font-family:var(--serif);font-weight:600;font-size:1.1rem}
+.convention .parties{border-block:1px solid var(--trait);padding:.9rem 0;margin:1rem 0}
+canvas.sig{display:block;width:100%;height:200px;background:#fff;border:1.5px solid var(--trait);border-radius:4px;touch-action:none;cursor:crosshair}
+.coche{display:flex;gap:.75rem;align-items:flex-start;margin:1rem 0}
+.coche input{width:1.5rem;height:1.5rem;flex:none;margin-top:.1rem;accent-color:var(--sceau)}
+dl.recap{display:grid;grid-template-columns:minmax(120px,max-content) 1fr;gap:.35rem 1.25rem;margin:1rem 0}
+dl.recap dt{color:var(--doux)} dl.recap dd{margin:0;overflow-wrap:anywhere}
+.tampon{display:inline-block;border:2px solid var(--ok);color:var(--ok);border-radius:4px;padding:.35rem .8rem;font-weight:600;transform:rotate(-2deg);margin-bottom:1rem}
+/* admin */
+nav.onglets{display:flex;gap:.25rem;overflow-x:auto;border-bottom:1px solid var(--trait);margin-bottom:1.25rem}
+nav.onglets button{background:none;border:0;border-bottom:3px solid transparent;padding:.8rem 1rem;min-height:48px;cursor:pointer;white-space:nowrap;color:var(--doux)}
+nav.onglets button[aria-pressed="true"]{border-color:var(--sceau);color:var(--encre);font-weight:600}
+.defile{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:.93rem}
+th,td{text-align:left;padding:.6rem .7rem;border-bottom:1px solid var(--trait);white-space:nowrap}
+th{color:var(--doux);font-weight:500}
+.etat{display:inline-block;padding:.1rem .55rem;border-radius:999px;font-size:.82rem;background:var(--ok-fond);color:var(--ok)}
+.etat.off{background:var(--champ);color:var(--doux)}
+.ligne{display:grid;grid-template-columns:1fr 150px auto auto;gap:.5rem;align-items:center;margin-bottom:.5rem}
+.ligne label{display:flex;gap:.35rem;align-items:center;font-size:.9rem}
+.clause{border:1px solid var(--trait);border-radius:4px;padding:.75rem;margin-bottom:.75rem}
+.adm textarea{min-height:90px;font-family:var(--serif)}
+.barres div{display:grid;grid-template-columns:minmax(110px,180px) 1fr 2.5rem;gap:.6rem;align-items:center;margin:.35rem 0;font-size:.93rem}
+.barres i{display:block;height:14px;background:var(--sceau);border-radius:2px;min-width:2px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem 2.5rem}
+textarea.csv{width:100%;min-height:160px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.82rem;background:var(--champ);border:1px solid var(--trait);border-radius:4px;padding:.6rem;white-space:pre}
+@media (max-width:760px){
+  .client{grid-template-columns:1fr}
+  ol.etapes{position:static;display:flex;gap:.4rem;overflow-x:auto}
+  ol.etapes li span{display:none} ol.etapes li.ici span{display:inline}
+  .ligne{grid-template-columns:1fr 1fr}
+}
+@media (prefers-reduced-motion:no-preference){.feuille{transition:border-color .2s}}
+</style>
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+</head>
+<body>
+<header class="barre">
+  <div><img class="logo" src="data:image/png;base64,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" alt="NC Advocat"><span><strong>Ouverture de dossier</strong></span></div>
+  <div class="bascule" role="group" aria-label="Vue">
+    <button data-act="vue" data-v="client" aria-pressed="true">Vue client</button>
+    <button data-act="vue" data-v="admin" aria-pressed="false">Administration</button>
+  </div>
+</header>
+<main id="app"></main>
+
+<script>
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const uid=()=>"x"+Math.random().toString(36).slice(2,8);
+const F=(id,label,type="text",requis=true,options="")=>({id,label,type,requis,options});
+const TYPES_DOSSIER="Droit de la famille,Droit du travail,Droit immobilier,Droit des sociétés,Droit pénal,Recouvrement,Autre";
+const ORIGINES="Recommandation,Recherche internet,Ancien client,Confrère,Réseaux sociaux,Autre";
+
+const champsB2C=()=>[
+  F("civilite","Civilité","select",true,"Madame,Monsieur"),F("nom","Nom"),F("prenom","Prénom"),
+  F("naissance","Date de naissance","date"),F("nationalite","Nationalité"),
+  F("adresse","Adresse"),F("cp","Code postal"),F("ville","Ville"),F("pays","Pays"),
+  F("email","E-mail","email"),F("tel","Téléphone","tel"),
+  F("typeDossier","Type de dossier","select",true,TYPES_DOSSIER),
+  F("origine","Comment avez-vous connu le cabinet ?","select",false,ORIGINES),
+  F("expose","Exposé succinct de votre demande","textarea",false)];
+const FACT=titre=>[F("t2",titre,"titre",false),F("fact_nom","Nom de la personne ou dénomination sociale","text",false),F("fact_tel","Tél.","tel",false),F("fact_adresse","Rue","text",false),F("fact_ville","Ville","text",false),F("fact_pays","Pays","text",false),F("fact_cp","Code postal","text",false),F("fact_email","E-mail","email",false)];
+const estFact=f=>f.id==="t2"||f.id.startsWith("fact_");
+const champsB2B=(reg)=>[
+  F("denomination","Dénomination sociale"),F("forme","Forme juridique"),F("registre","Numéro "+reg),F("tva","Numéro de TVA","text",false),
+  F("adresse","Adresse du siège"),F("cp","Code postal"),F("ville","Ville"),F("pays","Pays"),
+  F("nom","Nom du représentant"),F("prenom","Prénom du représentant"),F("qualite","Qualité du représentant"),
+  F("email","E-mail","email"),F("tel","Téléphone","tel"),
+  ...FACT("Adresse de facturation"),
+  F("typeDossier","Type de dossier","select",true,TYPES_DOSSIER),
+  F("origine","Comment avez-vous connu le cabinet ?","select",false,ORIGINES),
+  F("ubo","Bénéficiaires effectifs (nom, prénom, % de détention)","textarea",true),
+  F("expose","Exposé succinct de votre demande","textarea",false)];
+const P=(label)=>({id:uid(),label,requis:true});
+const clauses=(lux,b2b)=>[
+  {id:uid(),titre:"Objet de la mission",texte:"Le client confie au cabinet la mission de le conseiller, de l'assister et, le cas échéant, de le représenter dans le dossier décrit ci-dessus."},
+  {id:uid(),titre:"Honoraires",texte:"Les honoraires sont calculés au temps passé, sur la base du taux horaire communiqué au client, majoré de la TVA au taux de "+(lux?"17":"20")+" %. Une provision est demandée à l'ouverture du dossier."},
+  {id:uid(),titre:"Frais et débours",texte:"Les frais exposés pour le compte du client (huissier, greffe, traduction, déplacements) sont facturés en sus, sur justificatifs."},
+  {id:uid(),titre:"Lutte contre le blanchiment",texte:"Le cabinet est soumis à des obligations de vigilance. Le client s'engage à fournir les pièces d'identification demandées et à signaler tout changement."},
+  {id:uid(),titre:"Contestation",texte:lux?"Toute contestation relative aux honoraires peut être soumise au Conseil de l'Ordre des avocats du Barreau de Luxembourg.":"Toute contestation relative aux honoraires peut être soumise au Bâtonnier de l'Ordre des avocats du Barreau de Metz."+(b2b?"":" Le client consommateur peut également saisir gratuitement le médiateur de la consommation de la profession d'avocat.")},
+  {id:uid(),titre:"Données personnelles",texte:"Les données recueillies sont traitées pour la gestion du dossier et le respect des obligations légales du cabinet. Le client dispose d'un droit d'accès, de rectification et d'effacement."}];
+
+const LOGO=document.querySelector(".logo").src;
+const INTRO=`La présente lettre d'engagement a pour but de confirmer les modalités selon lesquelles il a été convenu que NC Advocat S.à r.l. ("NCA") fournira au Client divers services juridiques (ci-après la Mission).
+{{mission}}
+Ces termes s'appliqueront également de manière rétroactive et exclusive à toutes les prestations, réglementaires, juridiques et autres fournis par NCA au Client avant la date de cette lettre d'engagement ayant un lien avec l'objet de la présente lettre d'engagement.
+Les modalités d'engagement de NCA en relation avec la Mission seront exclusivement régies par cette lettre et par tout avenant qui serait décidé entre les parties.`;
+const PARAMS={taux:"350",bureau:"170",conformite:"500",tva:"17",
+ avocats:"Maître Nadia CHOUHAD, Avocat à la Cour – nadia.chouhad@ncadvocat.lu – Tél. +352 27 40 27 60\nMaître Jerome BACH, Avocat à la Cour – j.bach@ncadvocat.lu – Tél. +352 27 40 27 60",
+ banque:"Banque : BANQUE ET CAISSE D'EPARGNE DE L'ETAT\nIBAN : LU 89 0019 5555 2682 5000\nSWIFT : BCEELULL\nTitulaire : NC ADVOCAT S.à r.l."};
+const RGPD=[["Finalité","Base légale","Catégories de données","Catégories de personnes","Durée"],
+["Prospection et animation","Intérêt légitime","Identité/État civil, Coordonnées","Clients, Prospects","3 ans"],
+["Gestion de la relation avec ses clients et prospects","Intérêt légitime","Identité/État civil, Coordonnées, Vie personnelle/professionnelle","Clients, Prospects","Durée la plus longue entre : durée de la relation contractuelle et durée ferme de 3 ans."],
+["Organisation, inscription et invitation aux événements du cabinet","Intérêt légitime","Identité/État civil, Coordonnées, Vie personnelle/professionnelle","Clients, Prospects, Invités","3 ans"],
+["Production, gestion et suivi des dossiers de ses clients","Exécution de mesures précontractuelles ou du contrat","Identité/État civil, Vie personnelle et/ou professionnelle, Informations d'ordre économique et financier","Clients","Durée de la relation contractuelle augmentée des délais de prescription."],
+["Facturation","Exécution de mesures précontractuelles ou du contrat","Identité/État civil, Informations d'ordre économique et financier","Clients","10 ans à compter de la date de clôture de l'exercice comptable au cours duquel la facture a été émise."],
+["Recouvrement","Exécution de mesures précontractuelles ou du contrat","Identité/État civil, Informations d'ordre économique et financier","Clients","Jusqu'à complet paiement des honoraires."],
+["Prévention du blanchiment et du financement du terrorisme et lutte contre la corruption","Respect d'obligations légales et réglementaires","Identité/État civil, Vie personnelle et/ou professionnelle, Informations d'ordre économique et financier","Clients","5 ans après la fin des relations contractuelles avec le cabinet."],
+["Comptabilité","Respect d'obligations légales et réglementaires","Identité/État civil, Informations d'ordre économique et financier","Clients","10 ans à compter de la clôture de l'exercice comptable."]];
+const LETTRE=[
+["Champ d'application",`L'engagement comprend tous travaux utiles à la réalisation de la Mission ainsi que tout travail et assistance connexes qui pourraient être nécessaires ou utiles à leur réalisation.
+Il comprend également tout travail juridique expressément ou tacitement demandé, ou convenu par le Client, ou qui pourrait être nécessaire et/ou urgent, même sans son approbation préalable.`],
+["L'équipe NCA",`Le Client peut contacter à tout moment les avocats suivants en utilisant les coordonnées ci-après :
+{{avocats}}
+En outre, un ou plusieurs collaborateurs peuvent agir pour NCA dans le cadre de la Mission.`],
+["Représentant du Client",`Le Client pourra désigner auprès de NCA une ou plusieurs personnes de contact, qui seront les principaux interlocuteurs de NCA pour toutes les questions liées aux Opérations et qui seront dûment autorisés sous leur seule initiative à donner des instructions à NCA et à représenter le Client en ce qui concerne l'Engagement et son exécution (le "Représentant du Client").
+Le Représentant du Client est :
+{{representant}}
+{{adresse_client}}
+E-mail : {{email}}
+GSM : {{tel}}
+Si le Client est également représenté par un conseil étranger et si NCA est contactée ou désignée par ce conseil étranger (au nom du Client) en ce qui concerne ces Opérations, le conseil étranger du Client sera considéré comme le Représentant du Client (en plus de tout autre Représentant du Client, le cas échéant) et en conséquence donner valablement des instructions à NCA au nom et pour le compte du Client.
+Le Client accepte expressément et irrévocablement que NCA puisse communiquer sans limitation aucune avec un tel avocat étranger (ou tout autre Représentant du Client) en ce qui concerne les Opérations. À cet effet, le Client décharge NCA de ses obligations de secret professionnel.`],
+["Honoraires et facturation",`NCA appliquera un taux horaire (le "Taux Horaire") de {{taux}} EUR (hors TVA et frais) pour les services rendus sur une base de temps par tranche de 6 minutes.
+Les frais de bureau seront facturés à {{frais_bureau}} EUR (hors TVA).
+Les frais de compliance et de conformité à nos obligations d'identification de nos clients seront facturés d'un montant de {{frais_conformite}} euros (hors TVA).
+Étant donné les spécificités de chaque Mission et ou Opération, le fait qu'aucun travail standard ne puisse être effectué et que la quantité de travail dépende des autres parties et conseillers impliqués, les estimations des honoraires indiquées par NCA (le cas échéant) sont basées sur l'expérience passée mais ne sont que des indications et ne lient pas NCA.
+En fonction du temps passé, les frais effectivement engagés peuvent différer et être inférieurs ou supérieurs à ces estimations.
+Toutefois, NCA s'efforce d'indiquer des estimations d'honoraires aussi raisonnables et réalistes que possible. S'il est prévu qu'une estimation d'honoraires soit dépassée à l'avenir, NCA en informera immédiatement le Client afin d'établir un nouveau cadre d'honoraires ou d'élaborer des solutions alternatives.
+Tous les temps prestés sont enregistrés avec les détails des travaux et des collaborateurs. Ces informations pourront être communiqués au Client, à tout moment, à la demande et avec les factures correspondantes.
+A compter de la signature, sauf accord contraire, les services de NCA sont facturés, et sont dus et payables par le Client sur facture de NCA. La fréquence de la facturation est déterminée par NCA.
+Les autres frais, débours et, le cas échéant, la taxe sur la valeur ajoutée (TVA, au taux actuel de {{tva}} %) seront facturés par NCA en sus de ces tarifs.
+Les acomptes et les factures sont payables dès réception sur le compte suivant :
+{{banque}}
+Les factures seront adressées et envoyées selon les informations fournies par le Client.
+LE CLIENT RECONNAIT ET ACCEPTE EXPRESSEMENT QUE SI DES AVANCES OU DES FACTURES SONT PAR LA PRÉSENTE PAYABLES ET DÛES PAR LE CLIENT MAIS NON PAYÉES/REGLEES/EN SUSPENS DANS UN DELAI D'UN MOIS A COMPTER DE LA DATE DE RECEPTION DE LA FACTURE POUR QUELQUE RAISON QUE CE SOIT, NCA PEUT, A SA SEULE DISCRETION ET SANS PREAVIS, DECIDER D'ANNULER LA FACTURE, NCA PEUT, À SA SEULE DISCRÉTION ET SANS NOTIFICATION AU CLIENT, SUSPENDRE OU RÉDUIRE IMMÉDIATEMENT LA FOURNITURE DE SES SERVICES ET/OU RÉSILIER LE PRÉSENT CONTRAT ET N'EST PAS RESPONSABLE DES DOMMAGES DIRECTS OU INDIRECTS DU CLIENT OU DE TIERS QUI POURRAIENT EN RÉSULTER.
+TOUTE RÉSILIATION DU PRÉSENT CONTRAT PAR LE CLIENT, SAUF EN CAS DE FAUTE INTENTIONNELLE OU DE NÉGLIGENCE GRAVE DE NCA, DONNE À NCA LE DROIT DE FACTURER ET DE PAYER IMMÉDIATEMENT TOUS LES SERVICES ET DÉPENSES EN SUSPENS.
+CONFORMÉMENT À LA LOI DU 18 AVRIL 2004, LES INTÉRÊTS DE RETARD S'APPLIQUENT AU TAUX DE LA BANQUE CENTRALE EUROPÉENNE (BCE) MAJORÉ DE 8 % PAR AN.`],
+["Instructions, information et documentation",`NCA peut à tout moment considérer qu'elle est autorisée à recevoir des instructions du Représentant du Client ainsi que de toute personne dont le nom et les coordonnées peuvent être transmis à NCA par le Client ou le Représentant du Client, avec une indication claire que ladite personne est dûment autorisée à donner des instructions à NCA.
+NCA peut demander toute information et documentation nécessaire ou utile pour exécuter les termes de sa Mission ou qui sont importants pour la Mission ; et le Client veillera à ce que NCA reçoive toutes ces informations et documentations dès que cela sera raisonnablement possible.
+À moins que le Client n'ait expressément demandé à NCA de le faire, NCA ne vérifiera pas l'exactitude des informations fournies à NCA par le Client ou par d'autres personnes pour le compte du Client, et le Client reconnaît que NCA est en droit de se fier à ces informations. La responsabilité de NCA ne saurait être recherchée si de telles informations devaient s'avérer inexactes dans leur intégralité et ou partiellement ou obtenues de façon illégale.`],
+["Interventions de tiers mandatés par NCA",`Sous réserve de l'approbation préalable du Client, NCA pourra mandater des experts ou d'autres tiers pour le compte du Client et dans le cadre de la Mission. Dans ce cas, ces experts ou tiers seront seuls responsables de l'exécution de leurs services, et la responsabilité de NCA ne saura être recherchée Cela s'applique également si les services rendus par ce tiers sont facturés au Client par NCA.`],
+["Conflit d'intérêt",`NCA confirme qu'à sa connaissance, aucun conflit d'intérêts ne l'empêche d'agir en tant que représentant légal du Client.
+NCA s'engage à informer rapidement le Client si un tel conflit survient ou est découvert à l'avenir.`],
+["Communications",`NCA peut communiquer avec le Client et d'autres conseillers en recourant au courrier électronique et à d'autres moyens de communication, qui seront déterminants et seront considérés comme des preuves suffisantes dans le cadre des relations entre le Client et NCA.
+Le Client accepte les risques inhérents à ces moyens de communication utilisés par NCA (y compris, mais sans s'y limiter, le risque d'interception, d'accès non autorisé ou de piratage).`],
+["Confidentialité",`En tant que cabinet d'avocats luxembourgeois, les avocats et conseillers de NCA sont soumis, en vertu des lois luxembourgeoises et des règles établies par l'Ordre des avocats du Luxembourg, à des obligations de confidentialité et de secret professionnel.
+Toute information que NCA obtient du Client et qui n'est pas accessible au public sera traitée de manière confidentielle.
+Si NCA est à tout moment tenue par la loi applicable de divulguer des informations à une autorité compétente, NCA informera immédiatement le Client de cette demande ou obligation de divulgation (à condition que l'information du Client soit autorisée par la loi et les règlements applicables) afin que le Client puisse obtenir une ordonnance de protection ou tout autre recours approprié concernant une telle divulgation. NCA et le Client coopéreront pleinement à l'obtention d'une ordonnance de protection ou d'un autre recours approprié. Si, NCA est contrainte ou obligée par la loi ou toute autre disposition légale, ou réglementaire d'un organisme gouvernemental, réglementaire ou d'autorégulation de divulguer des informations, NCA ne peut divulguer que la partie des informations demandées qu'elle est légalement obligée de divulguer.
+En ce qui concerne la communication ou la divulgation d'informations au Représentant du Client, les clauses 3, 5 et 8 de la présente lettre d'engagement s'appliquent.`],
+["Résiliation",`Sous réserve des dispositions de l'article 4, le Client peut à tout moment mettre fin à la Mission par écrit.
+NCA peut mettre fin à la Mission par notification écrite avec un délai de préavis raisonnable, sauf s'il existe des motifs sérieux justifiant une résiliation immédiate ou s'il en a été expressément convenu ainsi dans le cadre du présent accord.
+Le Client convient que, entre autres, le non-paiement des factures ou des acomptes de NCA conformément aux présentes conditions générales ou la conduite d'activités par le Client (ou toute autre partie liée) d'une façon inacceptable, d'une façon générant pour le Client et/ou NCA un risque d'image négative, de mauvaise presse ou de déconsidération par les autorités publiques ou privées, de mauvaise foi, ou dans des circonstances illégales, frauduleuses ou sanctionnées pénalement, constitueraient des motifs graves justifiant une résiliation immédiate.`],
+["Archivage des documents",`NCA conservera le dossier relatif au Conseil (à l'exception des éléments qui seront renvoyés au Client ou transmis à d'autres personnes au nom du Client) pendant un délai maximum de dix ans après la fin du travail de NCA sur les Opérations. NCA a le droit de détruire le dossier à tout moment après l'expiration de cette période, sauf s'il en a été expressément convenu autrement.`],
+["Obligations relatives à la connaissance du Client",`Afin d'être en mesure d'effectuer une vérification préalable de la "connaissance du client", NCA aura besoin de certaines informations sur le Client et des autres parties aux Opérations ainsi que sur l'origine des fonds en relation avec les Opérations, comme cela peut être requis par la loi applicable, notamment en ce qui concerne la lutte contre le blanchiment d'argent et la lutte contre le financement du terrorisme.
+Le Client reconnaît et accepte que NCA ne puisse pas commencer à fournir ses services juridiques dans le cadre de la Mission tant que toutes les informations relatives à la vérification préalable de la "connaissance du Client" n'ont pas été fournies de sorte que NCA soit satisfaite.`],
+["Décisions commerciales",`NCA agit uniquement en tant que conseiller juridique du Client en ce qui concerne les Opérations.
+NCA ne fournit pas et ne fournira pas de conseils d'investissement ou de conseils sur le traitement fiscal, économique et comptable ou les mérites commerciaux des Opérations au Client ou à toute autre partie.`],
+["Responsabilité",`Sauf en cas de faute intentionnelle ou de négligence grave, la responsabilité globale de NCA pour tous les cas de responsabilité possibles résultant de la Mission ou en rapport avec la Mission sera limitée à la couverture fournie prévue par l'assurance fournie par le barreau de Luxembourg en rapport avec la Mission. Si cette assurance ne fournit pas de couverture, et sauf en cas de faute intentionnelle ou de négligence grave, la responsabilité globale de NCA pour tous les cas éventuels de responsabilité résultant de ou en rapport avec cette Mission sera limitée au montant des honoraires facturés par NCA au titre du temps passé et acquittés (c'est-à-dire ne comprenant pas les honoraires complémentaires de résultat). Le Client renonce à toute action en responsabilité à l'égard de NCA en relation avec les services / conseils rendus par NCA au Client qui ont été rendus plus de 12 mois avant que cette action en responsabilité ne soit initiée. Une couverture supplémentaire peut être mise en place sur demande. Dans ce cas, NCA facturera des frais supplémentaires pour couvrir la couverture d'assurance supplémentaire demandée par le Client.
+En ce qui concerne les procédures publiques, administratives ou précontentieuses, toute responsabilité de NCA est notamment exclue lorsque les délais ou les formalités n'ont pas pu être respectés en raison de la négligence ou de la conduite délibérée du Client, ou lorsque les informations ou les documents demandés par NCA et pertinents pour ladite procédure n'ont pas du tout été communiqués par le Client, ou l'ont été avec un retard déraisonnable ou pas au moment demandé par NCA.
+NCA n'est pas responsable envers le Client ou tout autre tiers des actes d'experts ou d'autres tiers intervenants tels que les banques ou l'administration publique, ni des dommages résultant de la planification, de la coordination, du suivi ou de la gestion de l'Opération dans lesquelles ou laquelle elle n'intervient pas.
+Le Client convient que le produit du travail fourni par NCA est exclusivement destiné au Client et non à des tiers. Par conséquent, le Client ne peut communiquer à des tiers les déclarations faites par NCA qu'après avoir obtenu l'accord écrit préalable de NCA.`],
+["Règlement général sur la protection des données",`NCA, agissant en tant que contrôleur de données, recueille des données afin de fonctionner efficacement et de vous fournir (toute personne concernée en relation avec NCA) les meilleurs services. Chez NCA, la protection de votre vie privée est une priorité. La présente politique de confidentialité a été conçue pour traiter de la manière dont NCA peut collecter, utiliser, partager, protéger et conserver des informations vous concernant, ainsi que des droits auxquels vous avez droit.
+Les informations personnelles du Client seront utilisées exclusivement dans le cadre de la demande sa demande et de la Mission qui en découle.
+En tant que responsable de traitement, NCA traite les données personnelles pour des besoins administratifs et de suivi de l'affaire.
+Dans les conditions définies par la loi Informatique et libertés et le règlement européen sur la protection des données, le Client a un droit d'accès aux données le concernant, de rectification, de limitation, de portabilité, d'effacement.
+Le Client dispose également un droit de s'opposer à tout moment, pour des raisons tenant à sa situation particulière, à un traitement des données à caractère personnel ayant comme base juridique l'intérêt légitime du Cabinet, ainsi que d'un droit d'opposition à la prospection commerciale.
+Le Client dispose également du droit de définir des directives générales et particulières définissant la manière dont il entend que soit exercées, après son décès, les droits mentionnés ci-dessus par courrier électronique à l'adresse suivante : nadia.chouhad@ncadvocat.lu ou par courrier postal accompagné d'une copie d'un titre d'identité signé à l'adresse suivante : NC ADVOCAT S.à r.l., 2A, rue de la Paix, L-2312 Luxembourg.
+Enfin, le Client a le droit d'introduire une réclamation auprès de la Commission Nationale pour la Protection des Données.`,RGPD],
+["Destinataire unique",`Le produit du travail fourni par NCA est destiné uniquement au Client (y compris le Représentant du Client) pour son usage exclusif et ne peut être utilisé par aucune autre personne ou entité ou à aucune autre fin, ni être rendu public, fourni ou distribué, ni son contenu communiqué, dans un document, une déclaration ou une autre communication, à un tiers sans l'accord écrit préalable de NCA. De même, le devoir de diligence de NCA est au seul bénéfice du Client et aucun tiers ne pourra s'en prévaloir.
+NCA s'engage à garder confidentielle toute information échangée dans le cadre de l'exécution du présent contrat. NCA s'engage à prendre les mesures nécessaires à l'égard de son personnel, de ses sous-traitants et de ses fournisseurs pour assurer, sous leur responsabilité, cette confidentialité.`],
+["Droit applicable et juridiction",`La présente lettre d'engagement (ainsi que tous les droits et obligations contractuels ou non contractuels qui y sont liés) est soumise au droit du Grand-Duché de Luxembourg et doit être interprétée conformément à ce droit. Les tribunaux du Luxembourg ont une compétence exclusive pour tout litige découlant de la présente Mission ou en rapport avec elle. Toutefois, avant tout litige devant les tribunaux susmentionnés, NCA et/ou le Client porteront le litige devant le Centre de Médiation Civile et Commerciale de Luxembourg de la manière la plus appropriée par la partie la plus diligente. Les deux parties s'engagent à accepter et à respecter le règlement de médiation applicable.
+Si le Client est d'accord avec le contenu de la présente lettre d'engagement, il lui est demandé de bien vouloir la signer électroniquement en confirmation de son accord avec les conditions énoncées ci-dessus.
+Nous vous prions d'agréer, au nom et pour le compte de NC Advocat S.à r.l., l'expression de nos salutations distinguées,`]];
+const champsLuxB2C=()=>[
+  F("t1","Client : personne physique / Individual information","titre",false),
+  F("nom","Nom / Last name"),F("prenom","Prénom / First name"),
+  F("adresse","Rue / Street address"),F("ville","Ville / City"),F("pays","Pays / Country"),F("cp","Code postal / ZIP code"),
+  F("tel","Tél. / Phone","tel"),F("email","E-mail","email"),
+  F("t3","Votre demande / Your request","titre",false),
+  F("aide","Je demande l'assistance judiciaire assurée par le Barreau de Luxembourg / I apply for legal aid provided by the Luxembourg Bar Association","select",true,"Oui / Yes,Non / No"),
+  F("typeDossier","Type de dossier","select",true,TYPES_DOSSIER),
+  F("origine","Comment avez-vous connu le cabinet ?","select",false,ORIGINES)];
+const DEMANDE=[
+["Honoraires / Fees",`Je suis informé(e) que le taux horaire est de {{taux}},00 EUR HT. / I am informed that the hourly rate is EUR {{taux}}.00 Excl. VAT.
+Les divers frais administratifs sont facturés sous forme d'un montant forfaitaire de {{frais_bureau}},00 EUR HT. / The various administrative fees are invoiced in the form of a lump sum of EUR {{frais_bureau}}.00 Excl. VAT.`],
+["Honoraire complémentaire de résultat / Result-related fee",`En outre un honoraire complémentaire de résultat sera calculé HT comme suit :
+• En cas d'économie réalisée : (montant réclamé par la partie adverse - montant à payer définitivement par le client) x 10 %
+• En cas de gain obtenu : (montant à payer par la partie adverse - montant prévu par les parties) x 10 %
+In addition, an extra result-related fee will be calculated excluding VT as follows:
+• In the event of cost savings: (amount claimed by the opposing party - amount to be paid definitively by the client) x 10 %
+• In the event of a gain: (amount to be paid by the opposing party - amount provided by the parties) x 10 %`],
+["Paiement à réception / Payment on receipt",`Toutes les factures émises par NC Advocat SARL doivent être réglées intégralement dès réception, sauf indication contraire spécifiée par écrit. Les modalités de paiement acceptées sont précisées sur nos factures.
+All invoices issued by NC Advocat SARL must be paid in full upon receipt, except if stated otherwise in writing. Accepted payment terms are specified on our invoices.`],
+["Suspension de prestation / Suspension of services",`En cas de retard de paiement ou de non-paiement d'une facture émise par NC Advocat SARL, nous nous réservons le droit de suspendre toute prestation de services en cours ou à venir, sans préavis. Cette suspension demeurera en vigueur jusqu'à paiement intégral de la facture.
+In the event of late payment or non-payment of an invoice issued by NC Advocat SARL, we reserve the right to suspend all current or future services, without prior notice. This suspension will remain in effect until the invoice has been paid in full.`],
+["Politique de confidentialité / Privacy policy",`En soumettant ce formulaire, j'accepte que mes informations personnelles soient utilisées exclusivement dans le cadre de ma demande et de la mission qui pourrait en découler.
+En tant que responsable de traitement, NC ADVOCAT SARL traite mes données personnelles pour des besoins administratifs et de suivi de mon affaire.
+Dans les conditions définies par la loi Informatique et libertés et le règlement européen sur la protection des données, je dispose d'un droit d'accès aux données me concernant, de rectification, de limitation, de portabilité, d'effacement.
+Je dispose également d'un droit de s'opposer à tout moment, pour des raisons tenant à ma situation particulière, à un traitement des données à caractère personnel ayant comme base juridique l'intérêt légitime du cabinet, ainsi que d'un droit d'opposition à la prospection commerciale.
+Je dispose également du droit de définir des directives générales et particulières définissant la manière dont vous entendez que soit exercées, après mon décès, les droits mentionnés ci-dessus par courrier électronique à l'adresse suivante : nadia.chouhad@ncadvocat.lu ou par courrier postal à l'adresse suivante : NC ADVOCAT SARL, 16, rue Beck / coin 95, Grand Rue L-1222 Luxembourg, accompagné d'une copie d'un titre d'identité signé.
+Enfin, j'ai le droit d'introduire une réclamation auprès de la Commission Nationale pour la Protection des Données.
+By submitting this form, I agree that my personal information may be used exclusively in connection with my request and the assignment that may from it.
+As the data controller, NC ADVOCAT SARL processes my personal data for administrative purposes and to follow up my case.
+Under the conditions defined by the Data Protection Act and the European Data Protection Regulation, I have the right to access, rectify, limit, port and delete data concerning me. I also have the right to object at any time, for reasons relating to my situation, to the processing of personal data whose legal basis is the firm's legitimate interest, as well as the right to object to commercial canvassing.
+I also have the right to define general and specific directives defining the way in which you intend the above-mentioned rights to be exercised after my death by e-mail to the following address: nadia.chouhad@ncadvocat.lu or by post to the following address: NC ADVOCAT SARL, 16, rue Beck / coin 95, Grand Rue L-1222 Luxembourg, together with a copy of a signed identity document.
+Finally, I have the right to lodge a complaint with the National Data Protection Commissions.`,RGPD],
+["Pièces relatives à votre affaire / Documents relating to your case",`Pour toute pièce relative à votre affaire, nous vous prions de bien vouloir les communiquer à l'adresse email suivante : info@ncadvocat.lu
+If you have any documents relating to your case, please send them to the following email address: info@ncadvocat.lu`]];
+const SPEC_LUX_B2C=()=>({lettre:false,sansNum:true,doc:"Demande d'ouverture de dossier",intro:"",params:{...PARAMS,taux:"280"},
+  clauses:DEMANDE.map(([titre,texte,tableau])=>({id:uid(),titre,texte,tableau})),
+  acceptations:["Lu et approuvé / Read and approved","J'ai lu et j'accepte la politique de confidentialité ci-dessus / I have read and accept the privacy policy above"]});
+const champsMetz=b2b=>[
+  ...(b2b?[F("t1","Client : personne morale","titre",false),
+    F("denomination","Dénomination ou raison sociale"),F("nom","Nom du mandataire"),F("prenom","Prénom du mandataire"),
+    F("registre","N° SIRET"),F("tva","N° TVA","text",false),
+    F("adresse","Siège social : rue"),F("ville","Ville"),F("pays","Pays"),F("cp","Code postal")]
+   :[F("t1","Client : personne physique","titre",false),
+    F("nom","Nom"),F("prenom","Prénom"),
+    F("adresse","Rue"),F("ville","Ville"),F("pays","Pays"),F("cp","Code postal"),
+    F("profession","Profession")]),
+  F("tel","Tél.","tel"),F("email","E-mail","email"),
+  ...(b2b?FACT("Adresse de facturation (facturation seulement possible au nom du client ou de son mandataire officiel)"):[]),
+  F("t3","Votre demande","titre",false),
+  F("affaire","Affaire ou mandat concerné"),
+  F("objet","Mission confiée au cabinet : aux fins de…","textarea"),
+  F("aide","Je demande l'Aide Juridictionnelle assurée par le Ministère de la Justice","select",true,"Oui,Non"),
+  F("typeDossier","Type de dossier","select",true,TYPES_DOSSIER),
+  F("origine","Comment avez-vous connu le cabinet ?","select",false,ORIGINES)];
+const CONV_FR=[
+["Honoraires",`Je suis informé(e) que le taux horaire est de {{taux}},00 EUR HT.
+Les divers frais administratifs et débours sont facturés sous forme d'un montant forfaitaire de {{frais_bureau}},00 EUR HT, hors frais de déplacement et vacation de déplacement.
+Je m'engage à payer une provision d'honoraires de {{provision}} euros HT à l'ouverture du dossier. Je suis informé(e) que je recevrai des factures intermédiaires au fur et à mesure des diligences accomplies que je m'engage à payer dès réception.
+En outre un honoraire complémentaire de résultat sera calculé HT comme suit :
+• En cas d'économie réalisée : (montant réclamé par la partie adverse - montant à payer définitivement par le client) x 10 %
+• En cas de gain obtenu : (montant à payer par la partie adverse - montant prévu par les parties) x 10 %
+La totalité des honoraires ainsi acceptée est majorée de la TVA au taux en vigueur.
+J'accepte dès à présent que le paiement des honoraires et frais pourra être effectué par prélèvement des sommes déposées à mon nom à ce titre sur le compte CARPA de NC ADVOCAT FRANCE SELARL et je m'y oblige dès à présent.`],
+["Mission",`Dès lors, je missionne NC ADVOCAT FRANCE SELARL d'assurer la défense de mes intérêts, dans l'affaire / dans le cadre du mandat :
+{{affaire}}
+aux fins de / d' :
+{{objet}}
+En cas d'urgence NC ADVOCAT FRANCE SELARL pourra se faire substituer.`],
+["Politique de confidentialité",`En soumettant ce formulaire, j'accepte que mes informations personnelles soient utilisées exclusivement dans le cadre de ma demande et de la mission qui pourrait en découler.
+En tant que responsable de traitement, NC ADVOCAT FRANCE SELARL traite mes données personnelles pour des besoins administratifs et de suivi de mon affaire.
+Dans les conditions définies par la loi Informatique et libertés et le règlement européen sur la protection des données, je dispose d'un droit d'accès aux données me concernant, de rectification, de limitation, de portabilité, d'effacement.
+Je dispose également d'un droit de s'opposer à tout moment, pour des raisons tenant à ma situation particulière, à un traitement des données à caractère personnel ayant comme base juridique l'intérêt légitime du cabinet, ainsi que d'un droit d'opposition à la prospection commerciale.
+Je dispose également du droit de définir des directives générales et particulières définissant la manière dont vous entendez que soit exercées, après mon décès, les droits mentionnés ci-dessus par courrier électronique à l'adresse suivante : nadia.chouhad@ncadvocat.fr ou par courrier postal à l'adresse suivante : NC ADVOCAT FRANCE SELARL, 26 avenue Foch, 57000, Metz, France, accompagné d'une copie d'un titre d'identité signé.
+Enfin, j'ai le droit d'introduire une réclamation auprès de la Commission nationale de l'informatique et des libertés.
+Je suis informé(e) que le cabinet met en œuvre des traitements de données à caractère personnel concernant ses clients. Ces traitements présentent les caractéristiques suivantes :`,RGPD],
+["Données traitées",`En fonction des finalités prévues ci-avant, les catégories de données conservées pourront légèrement différer, ces dernières étant essentiellement liées à la nature de la mission confiée. Ces informations sont nécessaires à la poursuite des finalités identifiées ci-dessus.
+Dans l'hypothèse où la mission objet de la présente le requiert, des données sensibles au sens de la règlementation applicable peuvent être traitées notamment lorsqu'elles sont nécessaires :
+• à la constatation, à l'exercice ou à la défense d'un droit en justice ;
+• ou aux fins de l'exécution des obligations et de l'exercice des droits propres au responsable du traitement ou à la personne concernée en matière de droit du travail, de la sécurité sociale et de la protection sociale.
+Les données traitées sont destinées aux personnes habilitées du cabinet, ainsi qu'à ses prestataires.`],
+["En cas de contestation",`Je suis informé(e) que je peux saisir un médiateur de la consommation.
+Je suis informé(e) que toute contestation relative à la validité, interprétation ou exécution de la présente relève du Bâtonnier de l'Ordre des Avocats de METZ qui pourra être saisi par la partie la plus diligente.
+Avant toute saisine du médiateur ou de l'avocat je m'engage à tenter de régler le litige préalablement auprès de l'avocat par une réclamation écrite. En cas de dessaisissement de l'avocat, les honoraires restent dus suivant les diligences accomplies et dans le respect des engagements de la présente y compris les honoraires de résultat si le gain ou l'économie a été obtenu.
+Je suis informé(e) que la validation de la présente convention donne immédiatement mandat à mon avocat d'accomplir sa mission et dès lors je ne dispose pas de délai de rétractation.`],
+["Pièces relatives à votre affaire",`Pour toute pièce relative à votre affaire, nous vous prions de bien vouloir les communiquer à l'adresse email suivante : info@ncadvocat.fr`]];
+const SPEC_METZ=()=>({lettre:false,sansNum:true,doc:"Demande d'ouverture de dossier",intro:"",
+  params:{taux:"250",bureau:"170",provision:"1000",conformite:"",tva:"20",avocats:"",banque:""},
+  clauses:CONV_FR.map(([titre,texte,tableau])=>({id:uid(),titre,texte,tableau})),
+  acceptations:["Lu et approuvé.","J'ai lu et j'accepte la politique de confidentialité ci-dessus."]});
+const M=(id,nom,cab,type,champs,pieces,spec)=>{const lux=cab==="lux";
+  if(lux&&!spec)champs.splice(champs.findIndex(f=>f.id==="origine"),0,F("mission","Mission confiée au cabinet (une ligne par prestation)","textarea"));
+  return{id,nom,cab,type,actif:true,champs,pieces,lettre:lux,doc:lux?"Lettre d'engagement":"Convention d'honoraires",intro:lux?INTRO:"",
+    params:lux?{...PARAMS}:{taux:"",bureau:"",conformite:"",tva:"20",avocats:"",banque:""},
+    clauses:lux?LETTRE.map(([titre,texte,tableau])=>({id:uid(),titre,texte,tableau})):clauses(false,type==="B2B"),
+    acceptations:lux?["La nomination de NCA dans les conditions de la lettre d'engagement est expressément acceptée.","Je certifie l'exactitude des informations fournies."]:["J'ai lu la convention d'honoraires et je l'accepte.","Je certifie l'exactitude des informations fournies."],
+    ...(spec||{})}};
+
+const S={
+  cab:{lux:{nom:"NC Advocat S.à r.l.",adresse:"2A, rue de la Paix, L-2312 Luxembourg",tel:"+352 27 40 27 60",email:"info@ncadvocat.lu"},
+       metz:{nom:"NC Advocat France SELARL",adresse:"26, avenue Foch, 57000 Metz, France",tel:"+33 (0)3 72 39 12 30",email:"info@ncadvocat.fr"}},
+  mods:[
+    M("m1","Particulier","lux","B2C",champsLuxB2C(),[P("Pièce d'identité"),P("Justificatif de domicile")],SPEC_LUX_B2C()),
+    M("m2","Particulier","metz","B2C",champsMetz(false),[P("Pièce d'identité"),P("Justificatif de domicile")],SPEC_METZ()),
+    M("m3","Professionnel","lux","B2B",champsB2B("RCS"),[P("Pièce d'identité du représentant"),P("Justificatif de domicile"),P("Extrait RCS ou équivalent")]),
+    M("m4","Professionnel","metz","B2B",champsMetz(true),[P("Pièce d'identité du représentant"),P("Justificatif de domicile"),P("Extrait Kbis ou équivalent")],SPEC_METZ())],
+  dos:[]
+};
+let vue="client", adm={onglet:"modeles",mod:"m1",csv:false};
+let C=neuf();
+function neuf(){return{etape:0,cab:null,mod:null,vals:{},fichiers:{},blobs:{},auto:{},lecture:null,lectureMsg:"",acc:{},factDiff:false,sig:null,fin:null}}
+const mod=id=>S.mods.find(m=>m.id===id);
+const app=document.getElementById("app");
+const ETAPES=["Votre dossier","Pièces et coordonnées","Lettre ou convention","Signature"];
+
+function rendre(garde){
+  document.querySelectorAll("[data-act=vue]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===vue));
+  app.innerHTML=vue==="client"?vueClient():vueAdmin();
+  if(vue==="client"&&C.etape===3&&!C.fin)brancherSignature();
+  if(!garde)window.scrollTo(0,0);
+}
+
+/* ---------- Vue client ---------- */
+function vueClient(){
+  const rail=`<ol class="etapes">${ETAPES.map((e,i)=>`<li class="${C.fin||i<C.etape?"fait":i===C.etape?"ici":""}"><span>${i===2&&mod(C.mod)?mod(C.mod).doc:e}</span></li>`).join("")}</ol>`;
+  return `<div class="client">${rail}<section class="feuille">${C.fin?ecranFin():[e0,e1,e3,e4][C.etape]()}</section></div>`;
+}
+function actions(suivant="Continuer"){
+  return `<div id="err"></div><div class="actions">${C.etape?`<button class="btn" data-act="retour">Retour</button>`:"<span></span>"}<button class="btn plein" data-act="suite">${suivant}</button></div>`;
+}
+function e0(){
+  const cabs=Object.entries(S.cab).map(([k,c])=>`<button data-act="cab" data-v="${k}" aria-pressed="${C.cab===k}"><b>${esc(c.nom)}</b><span>${esc(c.adresse)}</span></button>`).join("");
+  const liste=C.cab?S.mods.filter(m=>m.cab===C.cab&&m.actif):[];
+  return `<h1>Ouvrir votre dossier</h1><p class="intro">Ce formulaire tient lieu de lettre d'engagement ou de convention d'honoraires. Comptez environ cinq minutes, et préparez vos pièces justificatives.</p>
+  <h2>Quel cabinet suit votre dossier ?</h2><div class="choix">${cabs}</div>
+  ${C.cab?`<h2>Vous nous consultez en tant que</h2>${liste.length?`<div class="choix">${liste.map(m=>`<button data-act="mod" data-v="${m.id}" aria-pressed="${C.mod===m.id}"><b>${esc(m.nom)}</b><span>${m.type==="B2B"?"Société, association, indépendant":"Personne physique"}</span></button>`).join("")}</div>`:`<p class="note">Aucun formulaire n'est actif pour ce cabinet. Activez-en un dans l'administration.</p>`}`:""}
+  ${actions()}`;
+}
+function champHTML(f){
+  if(f.id==="t2")return `<label class="coche large"><input type="checkbox" data-fact ${C.factDiff?"checked":""}><span>Adresse de facturation différente</span></label>${C.factDiff?`<h3 class="large">${esc(f.label)}</h3>`:""}`;
+  if(estFact(f)&&!C.factDiff)return "";
+  if(f.type==="titre")return `<h3 class="large">${esc(f.label)}</h3>`;
+  const v=C.vals[f.id]??"", a=`data-f="${f.id}" id="f_${f.id}"`;
+  let ctl;
+  if(f.type==="select")ctl=`<select ${a}><option value="">Choisir…</option>${f.options.split(",").map(o=>o.trim()).filter(Boolean).map(o=>`<option ${o===v?"selected":""}>${esc(o)}</option>`).join("")}</select>`;
+  else if(f.type==="textarea")ctl=`<textarea ${a}>${esc(v)}</textarea>`;
+  else ctl=`<input type="${f.type}" ${a} value="${esc(v)}" autocomplete="off">`;
+  return `<label class="ch ${f.type==="textarea"||f.label.length>60?"large":""} ${C.auto[f.id]?"auto":""}" data-ch="${f.id}">${esc(f.label)}${f.requis?" <em>*</em>":""}${ctl}${C.auto[f.id]?"<small>Lu sur la pièce, à vérifier</small>":""}</label>`;
+}
+const IMG=/^image\/(jpeg|png|webp|gif)$/;
+let sampleFn=null,limImg=null;
+// Hébergée sur le serveur du cabinet, la page lit les pièces via Mistral (server.js renseigne cette balise).
+const LECTURE_URL=document.querySelector('meta[name="lecture-url"]')?.content||"";
+const lisible=f=>LECTURE_URL?/^(image\/(jpeg|png|webp)|application\/pdf)$/.test(f.type):IMG.test(f.type);
+const b64=f=>new Promise((ok,ko)=>{const r=new FileReader();r.onload=()=>ok(String(r.result).split(",")[1]);r.onerror=()=>ko({code:"image_rejected"});r.readAsDataURL(f)});
+async function lireMistral(m,ids,champs){
+  const pieces=await Promise.all(ids.map(async k=>({label:m.pieces.find(p=>p.id===k)?.label||"pièce",mime:C.blobs[k].type,data:await b64(C.blobs[k])})));
+  const rep=await fetch(LECTURE_URL,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({type:m.type,champs,pieces})});
+  if(!rep.ok)throw{code:rep.status===429?"rate_limited":"upstream_error"};
+  return (await rep.json()).valeurs;
+}
+function zoneLecture(){
+  if(C.lecture)return `<p class="note" role="status">Lecture des pièces en cours… comptez jusqu'à une minute. Vous pouvez continuer à remplir les champs.</p>`;
+  const dispo=LECTURE_URL||sampleFn,f=Object.values(C.blobs),n=f.filter(lisible).length,pdf=f.some(x=>!lisible(x));
+  let h=dispo?`<button class="btn sceau" data-act="lire" ${n?"":"disabled"}>Remplir les champs à partir des pièces</button>${n?"":`<p class="note">Joignez d'abord au moins une pièce (${LECTURE_URL?"photo ou PDF":"photo JPEG ou PNG"}).</p>`}`
+    :`<p class="note">La lecture automatique des pièces n'est pas disponible dans cette vue. Remplissez les champs à la main.</p>`;
+  if(pdf&&dispo)h+=`<p class="note">${LECTURE_URL?"Certains fichiers sont joints mais leur format ne peut pas être lu automatiquement.":"Les PDF sont bien joints, mais seules les photos sont lues automatiquement."}</p>`;
+  if(C.lectureMsg)h+=`<p class="note" role="status"><strong>${esc(C.lectureMsg)}</strong></p>`;
+  return h;
+}
+function majLecture(){const z=document.getElementById("zoneLecture");if(z)z.innerHTML=zoneLecture()}
+function e1(){
+  const m=mod(C.mod);
+  return `<h1>Pièces et coordonnées</h1><p class="intro">Commencez par joindre vos pièces : les champs se remplissent à partir de ce qui y est lisible. Vous vérifiez et complétez ensuite.</p>
+  <h2>Vos pièces justificatives</h2>
+  ${m.pieces.map(p=>{const n=C.fichiers[p.id];return `<div class="piece ${n?"ok":""}"><div><strong>${esc(p.label)}</strong>${p.requis?" <em style='color:var(--sceau);font-style:normal'>*</em>":""}<small>${n?"Joint : "+esc(n):"Aucun fichier joint"}</small></div>
+  <label class="btn ${n?"":"plein"}">${n?"Remplacer":"Joindre ou photographier"}<input type="file" accept="image/*,application/pdf" data-piece="${p.id}"></label></div>`}).join("")||`<p class="note">Aucune pièce n'est demandée pour ce formulaire.</p>`}
+  <div id="zoneLecture">${zoneLecture()}</div>
+  <h2>Vos coordonnées</h2><p class="intro">Les champs marqués d'un astérisque sont obligatoires.</p>
+  <div class="grille">${m.champs.map(champHTML).join("")}</div>${actions()}`;
+}
+const NON_LUS=["mission","typeDossier","origine","expose","aide","affaire","objet"];
+const aLire=f=>f.type!=="titre"&&!NON_LUS.includes(f.id)&&!f.id.startsWith("fact_");
+async function lire(){
+  const m=mod(C.mod),etapeMod=C.mod;
+  const ids=m.pieces.map(p=>p.id).filter(k=>C.blobs[k]&&lisible(C.blobs[k])).slice(0,LECTURE_URL?6:(limImg?.maxCount||4));
+  if(!ids.length||!(LECTURE_URL||sampleFn)||C.lecture)return;
+  const champs=m.champs.filter(aLire).map(f=>({id:f.id,label:f.label,type:f.type,...(f.type==="select"?{choix:f.options}:{})}));
+  const prompt=`Tu aides à préremplir le formulaire d'ouverture de dossier d'un cabinet d'avocats. Les images jointes sont, dans l'ordre : ${ids.map((k,i)=>(i+1)+") "+(m.pieces.find(p=>p.id===k)?.label||"pièce")).join(" ; ")}. Le client est ${m.type==="B2B"?"un professionnel (société)":"un particulier"}.
+Lis ces pièces et réponds uniquement par un objet JSON {"id_du_champ": "valeur"} pour les champs listés ci-dessous dont la valeur est lisible sur les pièces. N'invente rien : omets tout champ absent ou illisible. Dates au format AAAA-MM-JJ. Pour un champ à choix, reprends exactement l'un des choix. L'adresse vient du justificatif de domicile (ou de l'extrait de registre pour le siège d'une société) : le champ d'adresse contient seulement le numéro et la rue, le code postal, la ville et le pays vont dans leurs propres champs.
+Champs : ${JSON.stringify(champs)}`;
+  C.lecture=true;C.lectureMsg="";majLecture();
+  const dossier=C;
+  try{
+    const r=LECTURE_URL?await lireMistral(m,ids,champs):await sampleFn.json(prompt,{images:ids.map(k=>C.blobs[k])});
+    if(dossier!==C||C.mod!==etapeMod)return;
+    let n=0;
+    if(r&&typeof r==="object")m.champs.forEach(f=>{
+      const v=r[f.id];if(!aLire(f)||v==null||typeof v==="object")return;
+      let t=String(v).trim();if(!t)return;
+      if(f.type==="select"){t=f.options.split(",").map(x=>x.trim()).find(x=>x.toLowerCase()===t.toLowerCase());if(!t)return}
+      if(f.type==="date"&&!/^\d{4}-\d{2}-\d{2}$/.test(t))return;
+      C.vals[f.id]=t;C.auto[f.id]=true;n++});
+    C.lectureMsg=n?`${n} champ${n>1?"s remplis":" rempli"} à partir des pièces. Vérifiez-les avant de continuer.`:"Aucune information lisible sur ces pièces. Remplissez les champs à la main.";
+  }catch(e){
+    if(dossier!==C)return;
+    const code=e&&e.code;
+    if(["not_granted","sampling_disabled","not_declared","capability_disabled","capability_removed","images_unavailable"].includes(code)){sampleFn=null;C.lectureMsg=""}
+    else C.lectureMsg=({rate_limited:"Trop de lectures demandées. Réessayez dans quelques minutes ou remplissez les champs à la main.",session_expired:"Votre session a expiré. Reconnectez-vous puis relancez la lecture.",image_rejected:"Une photo n'a pas pu être lue (format ou taille). Joignez une autre photo.",refused:"Ces pièces n'ont pas pu être lues automatiquement. Remplissez les champs à la main."})[code]||"La lecture a échoué. Relancez-la ou remplissez les champs à la main.";
+  }
+  dossier.lecture=null;
+  if(dossier===C&&vue==="client"&&C.etape===1&&!C.fin)rendre(true);
+}
+(async()=>{try{const sf=await window.claude?.use("sample");if(!sf)return;const l=await sf.limits().catch(()=>null);if(l&&l.images){sampleFn=sf;limImg=l.images;majLecture()}}catch(e){}})();
+function nomClient(){const v=C.vals;return v.denomination||[v.prenom,v.nom].filter(Boolean).join(" ")||"Le client"}
+function subst(t,m){const v=C.vals,p=m.params||{};
+  const map={client:nomClient(),adresse_client:[v.adresse,[v.cp,v.ville].filter(Boolean).join(" "),v.pays].filter(Boolean).join(", "),email:v.email||"",tel:v.tel||"",
+    mission:(v.mission||"").split("\n").filter(x=>x.trim()).map(x=>"• "+x.trim()).join("\n"),
+    representant:v.denomination?[v.prenom,v.nom].filter(Boolean).join(" ")+(v.qualite?", "+v.qualite:""):nomClient(),
+    taux:p.taux,frais_bureau:p.bureau,frais_conformite:p.conformite,provision:p.provision,tva:p.tva,avocats:p.avocats,banque:p.banque};
+  return String(t||"").replace(/\{\{(\w+)\}\}/g,(_,k)=>map[k]??v[k]??"")}
+const paras=t=>t.split("\n").filter(x=>x.trim()).map(x=>`<p>${esc(x)}</p>`).join("");
+const tableHTML=t=>`<div class="defile"><table><thead><tr>${t[0].map(x=>`<th>${esc(x)}</th>`).join("")}</tr></thead><tbody>${t.slice(1).map(r=>`<tr>${r.map(x=>`<td>${esc(x)}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+function conventionHTML(){
+  const m=mod(C.mod),c=S.cab[m.cab],v=C.vals,T=t=>paras(subst(t,m));
+  const arts=m.clauses.map((k,i)=>`<h3>${m.lettre?(i+1)+". ":m.sansNum?"":"Article "+(i+1)+". "}${esc(k.titre)}</h3>${T(k.texte)}${k.tableau?tableHTML(k.tableau):""}`).join("");
+  if(m.sansNum)return `<div class="convention"><img class="logo" src="${LOGO}" alt="NC Advocat">${T(m.intro)}${arts}</div>`;
+  if(!m.lettre)return `<div class="convention"><div class="parties"><strong>Entre</strong> ${esc(c.nom)}, ${esc(c.adresse)},<br><strong>et</strong> ${esc(nomClient())}${v.denomination&&v.nom?`, représentée par ${esc(v.prenom||"")} ${esc(v.nom)}${v.qualite?", "+esc(v.qualite):""}`:""}${v.adresse?`, ${esc(v.adresse)}, ${esc(v.cp||"")} ${esc(v.ville||"")}`:""}.</div>${T(m.intro)}${arts}</div>`;
+  const salut=v.denomination?"Madame, Monsieur,":v.civilite==="Madame"?"Chère Madame,":v.civilite==="Monsieur"?"Cher Monsieur,":"Madame, Monsieur,";
+  const jour=new Date().toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"});
+  return `<div class="convention"><img class="logo" src="${LOGO}" alt="NC Advocat">
+  <p>${esc(nomClient())}<br>${esc(subst("{{adresse_client}}",m))}<br>E-mail : ${esc(v.email||"")}</p>
+  <p style="text-align:right">Luxembourg, le ${jour}</p><p><strong>Objet : lettre d'engagement</strong></p><p>${salut}</p>${T(m.intro)}${arts}
+  <p><strong>${esc(c.nom)}</strong><br>Avocat à la Cour</p></div>`;
+}
+function e3(){const m=mod(C.mod);
+  return `<h1>${esc(m.doc)}</h1><p class="intro">Lisez le document avant de le signer à l'étape suivante.</p>${conventionHTML()}${actions("Passer à la signature")}`;
+}
+function e4(){
+  return `<h1>Signature</h1><p class="intro">Signez dans le cadre avec le doigt, un stylet ou la souris.</p>
+  <canvas class="sig" id="sig" aria-label="Zone de signature"></canvas>
+  <p><button class="btn petit" data-act="effacer">Effacer la signature</button></p>
+  ${mod(C.mod).acceptations.map((a,i)=>`<label class="coche"><input type="checkbox" data-acc="${i}" ${C.acc[i]?"checked":""}><span>${esc(a)}</span></label>`).join("")}
+  ${actions("Signer et envoyer le dossier")}`;
+}
+function brancherSignature(){
+  const cv=document.getElementById("sig"),r=cv.getBoundingClientRect(),d=window.devicePixelRatio||1;
+  cv.width=r.width*d;cv.height=r.height*d;
+  const x=cv.getContext("2d");x.scale(d,d);x.lineWidth=2.2;x.lineCap="round";x.lineJoin="round";
+  x.strokeStyle="#1C1C1E";
+  let trace=false;C.sig=null;
+  const pt=e=>{const b=cv.getBoundingClientRect();return[e.clientX-b.left,e.clientY-b.top]};
+  cv.onpointerdown=e=>{trace=true;cv.setPointerCapture(e.pointerId);x.beginPath();x.moveTo(...pt(e));e.preventDefault()};
+  cv.onpointermove=e=>{if(!trace)return;x.lineTo(...pt(e));x.stroke()};
+  cv.onpointerup=cv.onpointercancel=()=>{if(trace){trace=false;C.sig=cv.toDataURL("image/png")}};
+}
+function ecranFin(){
+  const f=C.fin,m=mod(C.mod),c=S.cab[m.cab];
+  return `<div class="tampon">${esc(m.doc)} signée</div><h1>Votre dossier est ouvert</h1>
+  <p class="intro">Conservez la référence ci-dessous et téléchargez votre exemplaire signé.</p>
+  <dl class="recap"><dt>Référence</dt><dd><strong>${f.ref}</strong></dd><dt>Signée le</dt><dd>${f.date}</dd><dt>Cabinet</dt><dd>${esc(c.nom)}</dd><dt>Client</dt><dd>${esc(f.client)}</dd><dt>Type de dossier</dt><dd>${esc(f.typeDossier)}</dd><dt>Pièces jointes</dt><dd>${Object.values(C.fichiers).map(esc).join(", ")||"Aucune"}</dd><dt>Signature</dt><dd><img src="${C.sig}" alt="Signature du client" style="max-width:260px;background:#fff;border:1px solid var(--trait);border-radius:4px"></dd></dl>
+  <div id="err"></div>
+  <div class="actions"><button class="btn" data-act="recommencer">Ouvrir un autre dossier</button><button class="btn sceau" data-act="pdf" data-v="${f.ref}">Télécharger le document signé (PDF)</button></div>`;
+}
+/* ---------- PDF signé et téléchargements ---------- */
+const pdfTxt=t=>String(t??"").replace(/[\u2018\u2019]/g,"'").replace(/[\u201C\u201D]/g,'"').replace(/[\u2013\u2014]/g,"-").replace(/\u2026/g,"...").replace(/\u2022/g,"-").replace(/\u0153/g,"oe").replace(/\u0152/g,"OE").replace(/\u00A0/g," ").replace(/[^\x00-\xFF]/g,"");
+function construirePDF(){
+  const {jsPDF}=window.jspdf,m=mod(C.mod),c=S.cab[m.cab],f=C.fin,v=C.vals;
+  const d=new jsPDF({unit:"mm",format:"a4",compress:true}),L=18,R=192,W=R-L,BAS=276;let y=18;
+  const saut=h=>{if(y+h>BAS){d.addPage();y=20}};
+  const texte=(t,o={})=>{const s=o.taille||10,lh=s*0.45;d.setFont("helvetica",o.gras?"bold":"normal");d.setFontSize(s);d.setTextColor(20);
+    for(const para of pdfTxt(t).split("\n")){if(!para.trim())continue;
+      for(const l of d.splitTextToSize(para,W)){saut(lh);d.text(l,o.droite?R:L,y,o.droite?{align:"right"}:undefined);y+=lh}
+      y+=o.apres??1.5}};
+  const ligne=(a,b)=>{d.setFontSize(9.5);d.setFont("helvetica","normal");const la=d.splitTextToSize(pdfTxt(a),68);d.setFont("helvetica","bold");const lb=d.splitTextToSize(pdfTxt(b),W-74),h=Math.max(la.length,lb.length)*4.3+1.4;
+    saut(h);d.setFont("helvetica","normal");d.setTextColor(95);d.text(la,L,y);d.setFont("helvetica","bold");d.setTextColor(20);d.text(lb,L+74,y);y+=h};
+  const tableau=t=>{const n=t[0].length,w=n===5?[30,30,44,26,44]:Array(n).fill(W/n);d.setFontSize(7.5);d.setDrawColor(150);d.setTextColor(20);y+=1;
+    t.forEach((r,ri)=>{d.setFont("helvetica",ri?"normal":"bold");const cells=r.map((x,i)=>d.splitTextToSize(pdfTxt(x),w[i]-2.4)),h=Math.max(...cells.map(x=>x.length))*3.2+2.6;saut(h);let x=L;
+      cells.forEach((ls,i)=>{if(ri)d.rect(x,y-3.2,w[i],h);else{d.setFillColor(235);d.rect(x,y-3.2,w[i],h,"FD")}d.text(ls,x+1.2,y);x+=w[i]});y+=h});y+=3};
+  const infos=()=>{texte("Informations fournies par le client",{gras:true,taille:11,apres:2});let titre=null;
+    m.champs.forEach(ch=>{if(estFact(ch)&&!C.factDiff)return;if(ch.type==="titre"){titre=ch.label;return}
+      const val=v[ch.id];if(!val||(m.lettre&&ch.id==="mission"))return;
+      if(titre){y+=1.5;texte(titre,{gras:true,taille:9.5,apres:1.5});titre=null}
+      ligne(ch.label,val)});
+    ligne("Pièces jointes",Object.values(C.fichiers).join(", ")||"Aucune");y+=3};
+  const corps=()=>{
+    if(m.lettre){
+      const salut=v.denomination?"Madame, Monsieur,":v.civilite==="Madame"?"Chère Madame,":v.civilite==="Monsieur"?"Cher Monsieur,":"Madame, Monsieur,";
+      texte([nomClient(),subst("{{adresse_client}}",m),v.email?"E-mail : "+v.email:""].filter(Boolean).join("\n"),{apres:.5});y+=3;
+      texte("Luxembourg, le "+new Date().toLocaleDateString("fr-FR",{day:"numeric",month:"long",year:"numeric"}),{droite:true,apres:3});
+      texte("Objet : lettre d'engagement",{gras:true,apres:3});texte(salut,{apres:2.5})}
+    if(m.intro)texte(subst(m.intro,m),{apres:2});
+    m.clauses.forEach((k,i)=>{y+=2;saut(16);texte((m.lettre?(i+1)+". ":m.sansNum?"":"Article "+(i+1)+". ")+k.titre,{gras:true,taille:10.5,apres:1.5});
+      texte(subst(k.texte,m),{taille:9.5});if(k.tableau)tableau(k.tableau)});
+    if(m.lettre){y+=3;saut(12);texte(c.nom+"\nAvocat à la Cour",{gras:true,apres:.5})}
+    y+=3};
+  const signer=()=>{saut(64);texte("Acceptation et signature",{gras:true,taille:11,apres:2});
+    m.acceptations.forEach(a=>texte("[x] "+a,{taille:9.5}));y+=1;
+    texte(`Signé électroniquement par ${f.client} le ${f.date}.`,{taille:9.5,apres:2});
+    if(C.sig){let w=68,h=26;try{const pr=d.getImageProperties(C.sig),k=Math.min(68/pr.width,26/pr.height);w=pr.width*k;h=pr.height*k}catch(e){}
+      d.setDrawColor(150);d.rect(L,y,70,28);d.addImage(C.sig,"PNG",L+1,y+1,w,h);y+=32}};
+  try{const pr=d.getImageProperties(LOGO),w=50;d.addImage(LOGO,"PNG",L,y-4,w,w*pr.height/pr.width)}catch(e){}
+  d.setFont("helvetica","normal");d.setFontSize(8.5);d.setTextColor(95);
+  [c.nom,c.adresse,c.tel,c.email].filter(Boolean).forEach((x,i)=>d.text(pdfTxt(x),R,y-1+i*4,{align:"right"}));
+  y+=22;texte(m.doc.toUpperCase(),{gras:true,taille:14,apres:1});
+  texte(`Référence ${f.ref} - signé le ${f.date}`,{taille:9,apres:5});
+  if(m.lettre){corps();infos()}else{infos();corps()}
+  signer();
+  const n=d.getNumberOfPages();
+  for(let i=1;i<=n;i++){d.setPage(i);d.setFont("helvetica","normal");d.setFontSize(8);d.setTextColor(120);d.text(pdfTxt(`${c.nom} - ${m.doc} - ${f.ref}`),L,288);d.text(`${i}/${n}`,R,288,{align:"right"})}
+  return d.output("blob");
+}
+async function telecharger(nom,data){
+  if(window.claude){const dl=await window.claude.use("downloads");if(!dl)throw{code:"unavailable"};await dl.save({filename:nom,data});return}
+  const a=document.createElement("a");a.href=URL.createObjectURL(data instanceof Blob?data:new Blob([data]));a.download=nom;document.body.append(a);a.click();a.remove();
+}
+async function telechargerPDF(ref){
+  const dos=S.dos.find(x=>x.ref===ref);
+  if(!dos||!dos.pdf)return erreur("Le PDF de ce dossier n'a pas pu être généré. Rechargez la page puis recommencez la signature.");
+  try{await telecharger(`NC-Advocat-${ref}.pdf`,dos.pdf)}
+  catch(e){if(e&&e.code==="declined")return;erreur(e&&e.code==="rate_limited"?"Un téléchargement est déjà en attente de confirmation. Validez-le puis recommencez.":"Le téléchargement n'est pas disponible dans cette vue.")}
+}
+function erreur(msg){const e=document.getElementById("err");e.innerHTML=`<div class="alerte" role="alert">${msg}</div>`;e.scrollIntoView({block:"center",behavior:"smooth"})}
+function suite(){
+  const m=mod(C.mod);
+  if(C.etape===0){if(!C.cab)return erreur("Choisissez le cabinet qui suit votre dossier.");if(!m||m.cab!==C.cab)return erreur("Indiquez si vous consultez en tant que particulier ou professionnel.")}
+  if(C.etape===1){
+    let manque=[];document.querySelectorAll(".ch.err").forEach(n=>n.classList.remove("err"));
+    m.champs.forEach(f=>{if(f.type==="titre"||(estFact(f)&&!C.factDiff))return;const v=(C.vals[f.id]||"").trim();
+      if((f.requis&&!v)||(v&&f.type==="email"&&!/^\S+@\S+\.\S+$/.test(v))){manque.push(f.label);document.querySelector(`[data-ch="${f.id}"]`)?.classList.add("err")}});
+    const pm=m.pieces.filter(p=>p.requis&&!C.fichiers[p.id]).map(p=>p.label);
+    if(pm.length||manque.length)return erreur((pm.length?"Pièces manquantes : "+pm.map(esc).join(", ")+". ":"")+(manque.length?"À compléter ou corriger : "+manque.map(esc).join(", ")+".":""));
+  }
+  if(C.etape===3){
+    if(!C.sig)return erreur("Signez dans le cadre avant d'envoyer.");
+    if(!m.acceptations.every((_,i)=>C.acc[i]))return erreur("Cochez les cases d'acceptation avant d'envoyer.");
+    const d=new Date(),p=n=>String(n).padStart(2,"0");
+    const pre=m.cab==="lux"?"LUX":"MTZ",n=S.dos.filter(x=>x.cab===m.cab).length+1;
+    C.fin={ref:`${pre}-${d.getFullYear()}-${String(n).padStart(4,"0")}`,date:`${p(d.getDate())}/${p(d.getMonth()+1)}/${d.getFullYear()} ${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`,cab:m.cab,type:m.type,client:nomClient(),typeDossier:C.vals.typeDossier||"Non renseigné",origine:C.vals.origine||"Non renseigné",email:C.vals.email||"",pieces:Object.keys(C.fichiers).length};
+    try{C.fin.pdf=construirePDF()}catch(e){C.fin.pdf=null;console.error(e)}
+    S.dos.unshift(C.fin);return rendre();
+  }
+  C.etape++;rendre();
+}
+
+/* ---------- Administration ---------- */
+function vueAdmin(){
+  const o=[["modeles","Modèles de formulaires"],["editeur","Modifier un formulaire"],["cabinets","Coordonnées"],["dossiers","Dossiers reçus"],["stats","Statistiques"]];
+  return `<section class="feuille adm"><h1>Administration</h1>
+  <nav class="onglets">${o.map(([k,l])=>`<button data-act="onglet" data-v="${k}" aria-pressed="${adm.onglet===k}">${l}</button>`).join("")}</nav>
+  ${({modeles:aModeles,editeur:aEditeur,cabinets:aCabinets,dossiers:aDossiers,stats:aStats})[adm.onglet]()}</section>`;
+}
+const cabNom=k=>k==="lux"?"Luxembourg":"Metz";
+function aModeles(){
+  return `<p class="intro">Chaque modèle a ses propres champs, pièces et clauses. Dupliquez-en un pour créer un formulaire KYC, une lettre d'engagement ou un formulaire de contact.</p>
+  <div class="defile"><table><thead><tr><th>Modèle</th><th>Cabinet</th><th>Clientèle</th><th>Champs</th><th>Pièces</th><th>État</th><th></th></tr></thead><tbody>
+  ${S.mods.map(m=>`<tr><td><strong>${esc(m.nom)}</strong></td><td>${cabNom(m.cab)}</td><td>${m.type}</td><td>${m.champs.length}</td><td>${m.pieces.length}</td><td><span class="etat ${m.actif?"":"off"}">${m.actif?"En ligne":"Désactivé"}</span></td>
+  <td><button class="btn petit" data-act="editer" data-v="${m.id}">Modifier</button> <button class="btn petit" data-act="dupliquer" data-v="${m.id}">Dupliquer</button> <button class="btn petit" data-act="activer" data-v="${m.id}">${m.actif?"Désactiver":"Activer"}</button></td></tr>`).join("")}
+  </tbody></table></div>`;
+}
+function aEditeur(){
+  const m=mod(adm.mod)||S.mods[0];adm.mod=m.id;
+  const types=[["text","Texte"],["email","E-mail"],["tel","Téléphone"],["date","Date"],["select","Liste de choix"],["textarea","Texte long"],["titre","Titre de section"]];
+  return `<label class="ch" style="max-width:420px">Formulaire à modifier<select data-adm="choixMod">${S.mods.map(x=>`<option value="${x.id}" ${x.id===m.id?"selected":""}>${esc(x.nom)} – ${cabNom(x.cab)} (${x.type})</option>`).join("")}</select></label>
+  <h2>Général</h2><div class="grille">
+   <label class="ch">Nom affiché au client<input type="text" data-adm="mod" data-p="nom" value="${esc(m.nom)}"></label>
+   <label class="ch">Cabinet<select data-adm="mod" data-p="cab"><option value="lux" ${m.cab==="lux"?"selected":""}>Luxembourg</option><option value="metz" ${m.cab==="metz"?"selected":""}>Metz</option></select></label>
+   <label class="ch">Clientèle<select data-adm="mod" data-p="type"><option ${m.type==="B2C"?"selected":""}>B2C</option><option ${m.type==="B2B"?"selected":""}>B2B</option></select></label></div>
+  <h2>Honoraires, équipe et banque</h2><div class="grille">
+   ${[["taux","Taux horaire (EUR HT)"],["bureau","Frais de bureau (EUR HT)"],["conformite","Frais de conformité (EUR HT)"],["provision","Provision à l'ouverture (EUR HT)"],["tva","TVA (%)"]].map(([p,l])=>`<label class="ch">${l}<input type="text" data-adm="param" data-p="${p}" value="${esc(m.params[p])}"></label>`).join("")}
+   <label class="ch large">Avocats en charge (un par ligne)<textarea data-adm="param" data-p="avocats">${esc(m.params.avocats)}</textarea></label>
+   <label class="ch large">Coordonnées bancaires<textarea data-adm="param" data-p="banque">${esc(m.params.banque)}</textarea></label>
+   <label class="ch large">Texte d'introduction<textarea data-adm="mod" data-p="intro">${esc(m.intro)}</textarea></label></div>
+  <h2>Champs du formulaire</h2>
+  ${m.champs.map((f,i)=>`<div class="ligne"><input type="text" aria-label="Intitulé" data-adm="champ" data-i="${i}" data-p="label" value="${esc(f.label)}">
+   <select aria-label="Type" data-adm="champ" data-i="${i}" data-p="type">${types.map(([k,l])=>`<option value="${k}" ${f.type===k?"selected":""}>${l}</option>`).join("")}</select>
+   <label><input type="checkbox" data-adm="champ" data-i="${i}" data-p="requis" ${f.requis?"checked":""}> Obligatoire</label>
+   <button class="btn petit" data-act="supChamp" data-v="${i}">Supprimer</button>
+   ${f.type==="select"?`<input type="text" style="grid-column:1/-1" aria-label="Choix, séparés par des virgules" placeholder="Choix, séparés par des virgules" data-adm="champ" data-i="${i}" data-p="options" value="${esc(f.options)}">`:""}</div>`).join("")}
+  <button class="btn petit" data-act="addChamp">Ajouter un champ</button>
+  <h2>Pièces à joindre</h2>
+  ${m.pieces.map((p,i)=>`<div class="ligne"><input type="text" aria-label="Pièce" data-adm="piece" data-i="${i}" data-p="label" value="${esc(p.label)}"><span></span>
+   <label><input type="checkbox" data-adm="piece" data-i="${i}" data-p="requis" ${p.requis?"checked":""}> Obligatoire</label><button class="btn petit" data-act="supPiece" data-v="${i}">Supprimer</button></div>`).join("")}
+  <button class="btn petit" data-act="addPiece">Ajouter une pièce</button>
+  <h2>Articles du document</h2><p class="note" style="margin-bottom:1rem">Variables reprises automatiquement dans le texte : {{client}}, {{adresse_client}}, {{email}}, {{tel}}, {{representant}}, {{mission}}, {{taux}}, {{frais_bureau}}, {{frais_conformite}}, {{provision}}, {{tva}}, {{avocats}}, {{banque}}.</p>
+  ${m.clauses.map((k,i)=>`<div class="clause"><div class="ligne" style="grid-template-columns:1fr auto"><input type="text" aria-label="Titre de l'article ${i+1}" data-adm="clause" data-i="${i}" data-p="titre" value="${esc(k.titre)}"><button class="btn petit" data-act="supClause" data-v="${i}">Supprimer</button></div>
+   <textarea aria-label="Texte de l'article ${i+1}" data-adm="clause" data-i="${i}" data-p="texte">${esc(k.texte)}</textarea></div>`).join("")}
+  <button class="btn petit" data-act="addClause">Ajouter une clause</button>
+  <p class="note" style="margin-top:1.5rem">Les modifications s'appliquent tout de suite : repassez en « Vue client » pour les voir.</p>`;
+}
+function aCabinets(){
+  return Object.entries(S.cab).map(([k,c])=>`<h2>${cabNom(k)}</h2><div class="grille">
+   ${[["nom","Nom du cabinet"],["adresse","Adresse"],["tel","Téléphone"],["email","E-mail de réception des dossiers"]].map(([p,l])=>`<label class="ch">${l}<input type="text" data-adm="cab" data-i="${k}" data-p="${p}" value="${esc(c[p])}"></label>`).join("")}</div>`).join("");
+}
+function csv(){
+  const q=s=>`"${String(s).replace(/"/g,'""')}"`;
+  return ["Référence;Date de signature;Cabinet;Clientèle;Client;E-mail;Type de dossier;Origine;Pièces"].concat(S.dos.map(d=>[d.ref,d.date,cabNom(d.cab),d.type,d.client,d.email,d.typeDossier,d.origine,d.pieces].map(q).join(";"))).join("\n");
+}
+function aDossiers(){
+  return `<div id="err"></div>${S.dos.length?`<p><button class="btn petit" data-act="csv">Exporter en CSV (Excel)</button></p>
+  ${adm.csv?`<textarea class="csv" id="csv" readonly>${esc(csv())}</textarea><p><button class="btn petit" data-act="copier">Copier</button></p>`:""}
+  <div class="defile"><table><thead><tr><th>Référence</th><th>Signée le</th><th>Cabinet</th><th>Clientèle</th><th>Client</th><th>Type de dossier</th><th>Origine</th><th>Pièces</th><th></th></tr></thead><tbody>
+  ${S.dos.map(d=>`<tr><td><strong>${d.ref}</strong></td><td>${d.date}</td><td>${cabNom(d.cab)}</td><td>${d.type}</td><td>${esc(d.client)}</td><td>${esc(d.typeDossier)}</td><td>${esc(d.origine)}</td><td>${d.pieces}</td><td><button class="btn petit" data-act="pdf" data-v="${d.ref}">PDF signé</button></td></tr>`).join("")}</tbody></table></div>`
+  :`<p class="note">Aucun dossier pour l'instant. Les dossiers signés depuis « Vue client » apparaissent ici, avec leur PDF.</p>`}`;
+}
+function aStats(){
+  if(!S.dos.length)return `<p class="note">Les statistiques apparaissent dès le premier dossier signé.</p>`;
+  const bloc=(titre,cle)=>{const n={};S.dos.forEach(d=>{const v=cle(d);n[v]=(n[v]||0)+1});const max=Math.max(...Object.values(n),1);
+    return `<div><h2>${titre}</h2><div class="barres">${Object.entries(n).sort((a,b)=>b[1]-a[1]).map(([k,v])=>`<div><span>${esc(k)}</span><i style="width:${v/max*100}%"></i><b>${v}</b></div>`).join("")}</div></div>`};
+  return `<p class="intro">${S.dos.length} dossiers ouverts via le formulaire.</p><div class="stats">${bloc("Clientèle",d=>d.type==="B2B"?"Professionnels (B2B)":"Particuliers (B2C)")}${bloc("Cabinet",d=>cabNom(d.cab))}${bloc("Type de dossier",d=>d.typeDossier)}${bloc("Origine des clients",d=>d.origine)}</div>`;
+}
+
+/* ---------- Événements ---------- */
+const ACT={
+  vue:b=>{vue=b.dataset.v;rendre()},
+  cab:b=>{C.cab=b.dataset.v;C.mod=null;rendre()},
+  mod:b=>{if(C.mod!==b.dataset.v){C.mod=b.dataset.v;C.vals={};C.fichiers={};C.blobs={};C.auto={};C.lectureMsg=""}rendre()},
+  lire:()=>lire(),
+  suite,retour:()=>{C.etape--;rendre()},
+  effacer:()=>brancherSignature(),
+  recommencer:()=>{C=neuf();rendre()},
+  voirAdmin:()=>{C=neuf();vue="admin";adm.onglet="dossiers";rendre()},
+  onglet:b=>{adm.onglet=b.dataset.v;rendre()},
+  editer:b=>{adm.mod=b.dataset.v;adm.onglet="editeur";rendre()},
+  dupliquer:b=>{const c=JSON.parse(JSON.stringify(mod(b.dataset.v)));c.id=uid();c.nom+=" (copie)";c.actif=false;S.mods.push(c);rendre()},
+  activer:b=>{const m=mod(b.dataset.v);m.actif=!m.actif;rendre()},
+  addChamp:()=>{mod(adm.mod).champs.push(F(uid(),"Nouveau champ","text",false));rendre()},
+  supChamp:b=>{mod(adm.mod).champs.splice(+b.dataset.v,1);rendre()},
+  addPiece:()=>{mod(adm.mod).pieces.push(P("Nouvelle pièce"));rendre()},
+  supPiece:b=>{mod(adm.mod).pieces.splice(+b.dataset.v,1);rendre()},
+  addClause:()=>{mod(adm.mod).clauses.push({id:uid(),titre:"Nouvelle clause",texte:""});rendre()},
+  supClause:b=>{mod(adm.mod).clauses.splice(+b.dataset.v,1);rendre()},
+  csv:async()=>{try{await telecharger("dossiers-nc-advocat.csv","\ufeff"+csv())}catch(e){if(e&&e.code==="declined")return;adm.csv=true;rendre(true)}},
+  pdf:b=>telechargerPDF(b.dataset.v),
+  copier:b=>{const t=document.getElementById("csv");t.select();try{navigator.clipboard.writeText(t.value).catch(()=>document.execCommand("copy"))}catch(e){try{document.execCommand("copy")}catch(_){}}b.textContent="Copié"}
+};
+document.addEventListener("click",e=>{const b=e.target.closest("[data-act]");if(b&&ACT[b.dataset.act])ACT[b.dataset.act](b)});
+document.addEventListener("input",e=>{const t=e.target;if(t.dataset.f){C.vals[t.dataset.f]=t.value;if(C.auto[t.dataset.f]){delete C.auto[t.dataset.f];const l=t.closest(".ch");l?.classList.remove("auto");l?.querySelector("small")?.remove()}}if(t.dataset.acc)C.acc[t.dataset.acc]=t.checked});
+document.addEventListener("change",e=>{
+  const t=e.target,a=t.dataset.adm;
+  if(t.dataset.fact!==undefined){C.factDiff=t.checked;rendre(true);return}
+  if(t.dataset.piece){if(t.files[0]){C.fichiers[t.dataset.piece]=t.files[0].name;C.blobs[t.dataset.piece]=t.files[0];rendre(true)}return}
+  if(!a)return;
+  const val=t.type==="checkbox"?t.checked:t.value,m=mod(adm.mod);
+  if(a==="choixMod"){adm.mod=val;return rendre()}
+  if(a==="mod"){m[t.dataset.p]=val;return}
+  if(a==="param"){m.params[t.dataset.p]=val;return}
+  if(a==="cab"){S.cab[t.dataset.i][t.dataset.p]=val;return}
+  const liste={champ:m.champs,piece:m.pieces,clause:m.clauses}[a];
+  liste[+t.dataset.i][t.dataset.p]=val;
+  if(a==="champ"&&t.dataset.p==="type")rendre();
+});
+rendre();
+</script>
+</body>
+</html>
